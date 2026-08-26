@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.js",
-    "start": "node src/server.js",
-    "postinstall": "prisma skills sync || exit 0"
+    "start": "tsx src/server.js",
+    "postinstall": "prisma generate && (prisma skills sync || exit 0)"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.0",
