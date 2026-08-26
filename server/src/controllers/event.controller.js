@@ -16,7 +16,10 @@ export async function createEvent(req, res, next) {
 
     const numericVideoId = Number(videoId);
 
-    if (!Number.isInteger(numericVideoId) || numericVideoId <= 0) {
+    if (
+      !Number.isInteger(numericVideoId) ||
+      numericVideoId <= 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "videoId must be a positive integer"

@@ -45,14 +45,17 @@ function AnalyticsTable({ videos, isLoading }) {
 
       <div className="table-wrapper">
         <table className="analytics-table">
+          <caption className="sr-only">
+            Shoppable video engagement analytics
+          </caption>
           <thead>
             <tr>
-              <th>Video</th>
-              <th>Product</th>
-              <th>Views</th>
-              <th>Clicks</th>
-              <th>Add to Cart</th>
-              <th>Conversion Rate</th>
+              <th scope="col">Video</th>
+              <th scope="col">Product</th>
+              <th scope="col">Views</th>
+              <th scope="col">Clicks</th>
+              <th scope="col">Add to Cart</th>
+              <th scope="col">Conversion Rate</th>
             </tr>
           </thead>
 

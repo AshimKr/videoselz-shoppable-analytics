@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   createEngagementEvent,
@@ -31,7 +31,14 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [simulationMessage, setSimulationMessage] = useState("");
   const [error, setError] = useState("");
+
+  const [summary, setSummary] = useState({
+    views: 0,
+    clicks: 0,
+    addToCart: 0
+  });
 
   const loadAnalytics = useCallback(async (page = 1) => {
     try {
@@ -44,6 +51,7 @@ function App() {
       );
 
       setVideos(response.data);
+      setSummary(response.summary);
       setPagination(response.pagination);
     } catch (requestError) {
       setError(
@@ -59,23 +67,6 @@ function App() {
     loadAnalytics(1);
   }, [loadAnalytics]);
 
-  const summary = useMemo(() => {
-    return videos.reduce(
-      (totals, video) => {
-        totals.views += video.views;
-        totals.clicks += video.clicks;
-        totals.addToCart += video.addToCart;
-
-        return totals;
-      },
-      {
-        views: 0,
-        clicks: 0,
-        addToCart: 0
-      }
-    );
-  }, [videos]);
-
   async function handleSimulateTraffic() {
     if (!videos.length) {
       return;
@@ -83,6 +74,7 @@ function App() {
 
     try {
       setError("");
+      setSimulationMessage("");
       setIsSimulating(true);
 
       const randomVideo =
@@ -99,6 +91,10 @@ function App() {
       );
 
       await loadAnalytics(pagination.page);
+
+      setSimulationMessage(
+        `Simulated "${randomEventType}" for "${randomVideo.title}".`
+      );
     } catch (requestError) {
       setError(
         requestError.message ||
@@ -121,6 +117,12 @@ function App() {
           isSimulating={isSimulating}
         />
 
+        {simulationMessage && (
+          <div className="success-banner" role="status" aria-live="polite">
+            {simulationMessage}
+          </div>
+        )}
+
         {error && (
           <div className="error-banner" role="alert">
             <span>{error}</span>
@@ -136,21 +138,21 @@ function App() {
 
         <section className="metrics-grid" aria-label="Analytics summary">
           <MetricCard
-            label="Views"
+            label="Total Views"
             value={summary.views}
-            description="Total views on current page"
+            description="Across all tracked videos"
           />
 
           <MetricCard
-            label="Clicks"
+            label="Total Clicks"
             value={summary.clicks}
-            description="Total clicks on current page"
+            description="Across all tracked videos"
           />
 
           <MetricCard
             label="Add to Cart"
             value={summary.addToCart}
-            description="Total conversions on current page"
+            description="Across all tracked videos"
           />
 
           <MetricCard

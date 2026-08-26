@@ -7,7 +7,7 @@ function toNumber(value) {
 export async function getVideoAnalytics({ page, limit }) {
   const offset = (page - 1) * limit;
 
-  const [videos, totalResult] = await Promise.all([
+  const [videos, totalResult, summaryResult] = await Promise.all([
     prisma.$queryRaw`
       SELECT
         v.id AS id,
@@ -56,10 +56,39 @@ export async function getVideoAnalytics({ page, limit }) {
     prisma.$queryRaw`
       SELECT COUNT(*) AS total
       FROM videos
+    `,
+
+    prisma.$queryRaw`
+      SELECT
+        COUNT(
+          CASE
+            WHEN eventType = 'view' THEN 1
+          END
+        ) AS views,
+
+        COUNT(
+          CASE
+            WHEN eventType = 'click' THEN 1
+          END
+        ) AS clicks,
+
+        COUNT(
+          CASE
+            WHEN eventType = 'add_to_cart' THEN 1
+          END
+        ) AS addToCart
+
+      FROM engagement_events
     `
   ]);
 
   const total = toNumber(totalResult[0]?.total);
+
+  const summary = {
+    views: toNumber(summaryResult[0]?.views),
+    clicks: toNumber(summaryResult[0]?.clicks),
+    addToCart: toNumber(summaryResult[0]?.addToCart)
+  };
 
   const data = videos.map((video) => ({
     id: video.id,
@@ -73,6 +102,7 @@ export async function getVideoAnalytics({ page, limit }) {
 
   return {
     data,
+    summary,
     pagination: {
       page,
       limit,
