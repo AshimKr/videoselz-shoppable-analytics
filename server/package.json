@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.js",
-    "start": "tsx src/server.js",
-    "postinstall": "prisma generate && (prisma skills sync || exit 0)"
+    "start": "node src/server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.0",
