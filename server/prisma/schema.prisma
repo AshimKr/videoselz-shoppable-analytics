@@ -1,13 +1,47 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
 }
 
 datasource db {
   provider = "sqlite"
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Decimal
+  createdAt DateTime @default(now())
+
+  videos    Video[]
+
+  @@map("products")
+}
+
+model Video {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  videoUrl  String
+  title     String
+
+  product   Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  events    EngagementEvent[]
+
+  @@index([productId])
+  @@map("videos")
+}
+
+model EngagementEvent {
+  id        Int      @id @default(autoincrement())
+  videoId   Int
+  eventType String
+  timestamp DateTime @default(now())
+
+  video     Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([videoId])
+  @@index([eventType])
+  @@map("engagement_events")
 }
