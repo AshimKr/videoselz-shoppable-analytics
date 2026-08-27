@@ -631,7 +631,7 @@ Technical Walkthrough
 
 Required 3–5 minute project walkthrough.
 
-<YOUR_LOOM_OR_SCREEN_RECORDING_URL>
+https://www.loom.com/share/0a62391c7649439b9216c37e428cb32f
 
 Screenshots
 
